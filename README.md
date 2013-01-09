@@ -4,9 +4,7 @@ ofxLeapMotion
 A wrapper for the Leap SDK ( 0.7 and up )
 
 This is work in progress. 
-Right now shows getting and using the fingers in OF. 
-
-Will add a full hand example. 
+Updated example includes a simple hand structure which has finger pos, velocity, id and palm position and orientation. 
 
 Notes:
 - You will need the Leap.app running while the example runs.
