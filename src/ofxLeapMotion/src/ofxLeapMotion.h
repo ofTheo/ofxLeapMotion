@@ -10,27 +10,69 @@
 
 using namespace Leap;
 
+class ofxLeapMotionSimpleHand{
+    public:
+    
+    typedef struct{
+        ofPoint pos;
+        ofPoint vel;
+        int64_t id; 
+    }simpleFinger;
+    
+    vector <simpleFinger>  fingers;
+    
+    ofPoint handPos; 
+    ofPoint handNormal; 
+    
+    void debugDraw(){
+        ofPushStyle();
+        
+            ofSetColor(190);
+            ofSetLineWidth(2);
+
+            ofEnableLighting();
+            ofPushMatrix();
+                ofTranslate(handPos);
+                //rotate the hand by the downwards normal
+                ofQuaternion q;
+                q.makeRotate(ofPoint(0, -1, 0), handNormal);
+                ofMatrix4x4 m;
+                q.get(m);
+                glMultMatrixf(m.getPtr());
+                
+                
+                //scale it to make it not a box
+                ofScale(1, 0.35, 1.0);
+                ofBox(0, 0, 0, 60);
+            ofPopMatrix();
+        
+            
+            for(int i = 0; i < fingers.size(); i++){
+                ofDrawArrow(handPos, fingers[i].pos, 10);
+            }
+            
+            ofSetColor(220, 220, 0);
+            for(int i = 0; i < fingers.size(); i++){
+                ofDrawArrow(fingers[i].pos + fingers[i].vel/20, fingers[i].pos + fingers[i].vel/10, 10);
+            }
+            
+        ofPopStyle();
+    }
+};
+
 class ofxLeapMotion : public Listener{
 	public:
 	
 		ofxLeapMotion(){
-			currentFrameID = 0;
-			preFrameId = -1;
-			
-			xOffsetIn = 0;
-			yOffsetIn = 0;
-			zOffsetIn = 0;
-
-			xOffsetOut = 0;
-			yOffsetOut = 0;
-			zOffsetOut = 0;
-
-			xScale = 1;
-			yScale = 1;
-			zScale = 1;
-			
+            reset();
+            resetMapping();
 			ourController = new Leap::Controller(); 
 		}
+        
+        void reset(){
+            currentFrameID = 0;
+            preFrameId = -1;
+        }
 
 		~ofxLeapMotion(){
 			//note we don't delete the controller as it causes a crash / mutex exception. 
@@ -45,6 +87,7 @@ class ofxLeapMotion : public Listener{
 
 		//--------------------------------------------------------------
 		void open(){
+            reset();
 			ourController->addListener(*this);
 		}
 		
@@ -74,7 +117,7 @@ class ofxLeapMotion : public Listener{
 		
 		//Simple access to the hands 
 		//-------------------------------------------------------------- 
-		vector <Hand> getHands(){
+		vector <Hand> getLeapHands(){
 		
 			vector <Hand> handsCopy; 
 			if( ourMutex.tryLock(2000) ){
@@ -83,6 +126,35 @@ class ofxLeapMotion : public Listener{
 			}
 
 			return handsCopy;
+		}
+
+		//-------------------------------------------------------------- 
+		vector <ofxLeapMotionSimpleHand> getSimpleHands(){
+		
+			vector <ofxLeapMotionSimpleHand> simpleHands; 
+			vector <Hand> leapHands = getLeapHands();
+            
+            for(int i = 0; i < leapHands.size(); i++){
+                ofxLeapMotionSimpleHand curHand;
+            
+                curHand.handPos     = getMappedofPoint( leapHands[i].palmPosition() );
+                curHand.handNormal  = getofPoint( leapHands[i].palmNormal() );
+
+                for(int j = 0; j < leapHands[i].fingers().count(); j++){
+                    const Finger & finger = hands[i].fingers()[j];
+                
+                    ofxLeapMotionSimpleHand::simpleFinger f; 
+                    f.pos = getMappedofPoint( finger.tipPosition() );
+                    f.vel = getMappedofPoint(finger.tipVelocity());
+                    f.id = finger.id();
+                    
+                    curHand.fingers.push_back( f );                    
+                }
+                
+                simpleHands.push_back( curHand ); 
+            }
+
+			return simpleHands;
 		}
 
 		//-------------------------------------------------------------- 
@@ -99,6 +171,21 @@ class ofxLeapMotion : public Listener{
 		int64_t getCurrentFrameID(){
 			return currentFrameID;
 		}
+        
+		//-------------------------------------------------------------- 
+        void resetMapping(){
+            xOffsetIn = 0;
+			yOffsetIn = 0;
+			zOffsetIn = 0;
+
+			xOffsetOut = 0;
+			yOffsetOut = 0;
+			zOffsetOut = 0;
+
+			xScale = 1;
+			yScale = 1;
+			zScale = 1;
+        }
 		
 		//-------------------------------------------------------------- 
 		void setMappingX(float minX, float maxX, float outputMinX, float outputMaxX){

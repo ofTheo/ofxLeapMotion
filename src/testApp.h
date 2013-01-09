@@ -22,7 +22,8 @@ class testApp : public ofBaseApp{
     void gotMessage(ofMessage msg);
 		
 	ofxLeapMotion leap;
-	
+	vector <ofxLeapMotionSimpleHand> simpleHands;
+    
 	vector <int> fingersFound; 
 	ofEasyCam cam;
 	ofLight l1;
