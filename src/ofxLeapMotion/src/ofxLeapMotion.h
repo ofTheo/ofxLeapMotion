@@ -139,6 +139,8 @@ class ofxLeapMotion : public Listener{
                 } else if (gestures[i].type() == Leap::Gesture::TYPE_KEY_TAP) {
                     Leap::KeyTapGesture tap = gestures[i];
                     
+                    iGestures = 2;
+                    
                 } else if (gestures[i].type() == Leap::Gesture::TYPE_SWIPE) {
                     Leap::SwipeGesture swipe = gestures[i];
                     Leap::Vector diff = 0.04f*(swipe.position() - swipe.startPosition());
@@ -146,19 +148,19 @@ class ofxLeapMotion : public Listener{
                     
                     // left
                     if (curSwipe.x < -1 && curSwipe.y < 2) {
-                        iGestures = 4;
+                        iGestures = 3;
                     }
                     // right
                     else if (curSwipe.x > 1 && curSwipe.y < 2) {
-                        iGestures = 3;
+                        iGestures = 4;
                     }
                     // up
                     if (curSwipe.y < -1 && curSwipe.y > -20 && curSwipe.y < 0) {
-                        iGestures = 6;
+                        iGestures = 5;
                     }
                     // down
                     else if (curSwipe.y > 1 && curSwipe.y > 0 && curSwipe.y < 20) {
-                        iGestures = 5;
+                        iGestures = 6;
                     }
                     
                     if (swipe.state() == 3) {
@@ -172,7 +174,7 @@ class ofxLeapMotion : public Listener{
 
                     if (progress >= 1.0f) {
                         
-                        ofVec3f center = getMappedofPoint(circle.center());//normalizeCoords(circle.center());
+                        ofVec3f center = getMappedofPoint(circle.center());
                         ofVec3f normal(circle.normal().x, circle.normal().y, circle.normal().z);
                         double curAngle = 6.5;
                         if (normal.z < 0) {
