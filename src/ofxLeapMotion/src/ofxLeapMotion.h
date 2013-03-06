@@ -22,7 +22,7 @@ class ofxLeapMotionSimpleHand{
     vector <simpleFinger>  fingers;
     
     ofPoint handPos; 
-    ofPoint handNormal; 
+    ofPoint handNormal;
     
     void debugDraw(){
         ofPushStyle();
@@ -62,6 +62,9 @@ class ofxLeapMotionSimpleHand{
 
 class ofxLeapMotion : public Listener{
 	public:
+    
+    // TODO: adding leap gesture support - JRW
+    int iGestures;
 	
 		ofxLeapMotion(){
             reset();
@@ -90,7 +93,115 @@ class ofxLeapMotion : public Listener{
             reset();
 			ourController->addListener(*this);
 		}
-		
+    
+        // TODO: adding leap gesture support - JRW
+        //--------------------------------------------------------------
+        void setupGestures(){
+            // swipes enabled
+            ourController->enableGesture(Gesture::TYPE_SWIPE);
+            
+            // circles enabled
+            ourController->enableGesture(Gesture::TYPE_CIRCLE);
+            
+            // screen taps or pokes
+            ourController->enableGesture(Gesture::TYPE_SCREEN_TAP);
+            
+            // key taps or tap downwards
+            ourController->enableGesture(Gesture::TYPE_KEY_TAP);
+        }
+    
+        // TODO: adding leap gesture support - JRW
+        //--------------------------------------------------------------
+        void updateGestures(){
+            
+            Leap::Frame frame = ourController->frame();
+            
+            if (lastFrame == frame) {
+                return;
+            }
+            
+            Leap::GestureList gestures = lastFrame.isValid()    ?
+            frame.gestures(lastFrame) :
+            frame.gestures();
+            
+            lastFrame = frame;
+            
+            size_t numGestures = gestures.count();
+            
+            for (size_t i=0; i < numGestures; i++) {
+                
+                if (gestures[i].type() == Leap::Gesture::TYPE_SCREEN_TAP) {
+                    Leap::ScreenTapGesture tap = gestures[i];
+                    ofVec3f tapLoc = getMappedofPoint(tap.position());
+                                        
+                    iGestures = 1;
+                    
+                } else if (gestures[i].type() == Leap::Gesture::TYPE_KEY_TAP) {
+                    Leap::KeyTapGesture tap = gestures[i];
+                    
+                } else if (gestures[i].type() == Leap::Gesture::TYPE_SWIPE) {
+                    Leap::SwipeGesture swipe = gestures[i];
+                    Leap::Vector diff = 0.04f*(swipe.position() - swipe.startPosition());
+                    ofVec3f curSwipe(diff.x, -diff.y, diff.z);
+                    
+                    // left
+                    if (curSwipe.x < -1 && curSwipe.y < 2) {
+                        iGestures = 4;
+                    }
+                    // right
+                    else if (curSwipe.x > 1 && curSwipe.y < 2) {
+                        iGestures = 3;
+                    }
+                    // up
+                    if (curSwipe.y < -1 && curSwipe.y > -20 && curSwipe.y < 0) {
+                        iGestures = 6;
+                    }
+                    // down
+                    else if (curSwipe.y > 1 && curSwipe.y > 0 && curSwipe.y < 20) {
+                        iGestures = 5;
+                    }
+                    
+                    if (swipe.state() == 3) {
+                        iGestures = 0; // do nothing
+                    }
+                }
+                
+                else if (gestures[i].type() == Leap::Gesture::TYPE_CIRCLE) {
+                    Leap::CircleGesture circle = gestures[i];
+                    float progress = circle.progress();
+
+                    if (progress >= 1.0f) {
+                        
+                        ofVec3f center = getMappedofPoint(circle.center());//normalizeCoords(circle.center());
+                        ofVec3f normal(circle.normal().x, circle.normal().y, circle.normal().z);
+                        double curAngle = 6.5;
+                        if (normal.z < 0) {
+                            curAngle *= -1;
+                        }
+                        
+                        if (curAngle < 0) {
+                            // clockwise rotation
+                            iGestures = 7;
+                        }
+                        else {
+                            // counter-clockwise rotation
+                            iGestures = 8;
+                        }                        
+                    }
+                    
+                    // it our state is 3, then turn off
+                    if (circle.state() == 3) {
+                        iGestures = 0;
+                    }
+                    
+                }
+                // turn off gestures!
+                else {
+                    iGestures = 0;
+                }
+            }
+        }
+    
 		//--------------------------------------------------------------
 		virtual void onInit(const Controller& controller){
 			ofLogVerbose("ofxLeapMotionApp - onInit"); 
@@ -110,7 +221,7 @@ class ofxLeapMotion : public Listener{
 		//note: this function is called in a seperate thread - so GL commands here will cause the app to crash. 
 		//-------------------------------------------------------------- 
 		virtual void onFrame(const Controller& contr){
-			ofLogVerbose("ofxLeapMotionApp - onFrame"); 
+			ofLogVerbose("ofxLeapMotionApp - onFrame");
 
 			onFrameInternal(contr); // call this if you want to use getHands() / isFrameNew() etc 
 		}
@@ -255,8 +366,9 @@ class ofxLeapMotion : public Listener{
 			 
 			vector <Hand> hands; 
 			Leap::Controller * ourController;
+    
+            // TODO: added for Gesture support - JRW
+            Leap::Frame lastFrame;
 			
 			Poco::FastMutex ourMutex;
 };
-
-
