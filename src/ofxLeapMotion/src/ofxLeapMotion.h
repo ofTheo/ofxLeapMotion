@@ -97,17 +97,17 @@ class ofxLeapMotion : public Listener{
         // TODO: adding leap gesture support - JRW
         //--------------------------------------------------------------
         void setupGestures(){
-            // swipes enabled
-            ourController->enableGesture(Gesture::TYPE_SWIPE);
-            
-            // circles enabled
-            ourController->enableGesture(Gesture::TYPE_CIRCLE);
-            
-            // screen taps or pokes
+            // enables screen tap gesture (forward poke / tap)
             ourController->enableGesture(Gesture::TYPE_SCREEN_TAP);
             
-            // key taps or tap downwards
+            // enables key tap gesture (down tap)
             ourController->enableGesture(Gesture::TYPE_KEY_TAP);
+            
+            // enables swipe gesture
+            ourController->enableGesture(Gesture::TYPE_SWIPE);
+            
+            // enables circle gesture
+            ourController->enableGesture(Gesture::TYPE_CIRCLE);
         }
     
         // TODO: adding leap gesture support - JRW
@@ -130,44 +130,48 @@ class ofxLeapMotion : public Listener{
             
             for (size_t i=0; i < numGestures; i++) {
                 
+                // screen tap gesture (forward poke / tap)
                 if (gestures[i].type() == Leap::Gesture::TYPE_SCREEN_TAP) {
                     Leap::ScreenTapGesture tap = gestures[i];
                     ofVec3f tapLoc = getMappedofPoint(tap.position());
-                                        
+                    
                     iGestures = 1;
                     
-                } else if (gestures[i].type() == Leap::Gesture::TYPE_KEY_TAP) {
+                }
+                
+                // key tap gesture (down tap)
+                else if (gestures[i].type() == Leap::Gesture::TYPE_KEY_TAP) {
                     Leap::KeyTapGesture tap = gestures[i];
                     
                     iGestures = 2;
                     
-                } else if (gestures[i].type() == Leap::Gesture::TYPE_SWIPE) {
+                }
+                
+                // swipe gesture
+                else if (gestures[i].type() == Leap::Gesture::TYPE_SWIPE) {
                     Leap::SwipeGesture swipe = gestures[i];
                     Leap::Vector diff = 0.04f*(swipe.position() - swipe.startPosition());
                     ofVec3f curSwipe(diff.x, -diff.y, diff.z);
                     
-                    // left
+                    // swipe left
                     if (curSwipe.x < -1 && curSwipe.y < 2) {
-                        iGestures = 3;
-                    }
-                    // right
-                    else if (curSwipe.x > 1 && curSwipe.y < 2) {
                         iGestures = 4;
                     }
-                    // up
-                    if (curSwipe.y < -1 && curSwipe.y > -20 && curSwipe.y < 0) {
-                        iGestures = 5;
+                    // swipe right
+                    else if (curSwipe.x > 1 && curSwipe.y < 2) {
+                        iGestures = 3;
                     }
-                    // down
-                    else if (curSwipe.y > 1 && curSwipe.y > 0 && curSwipe.y < 20) {
+                    // swipe up
+                    if (curSwipe.y < -1 && curSwipe.y > -20 && curSwipe.y < 0) {
                         iGestures = 6;
                     }
-                    
-                    if (swipe.state() == 3) {
-                        iGestures = 0; // do nothing
+                    // swipe down
+                    else if (curSwipe.y > 1 && curSwipe.y > 0 && curSwipe.y < 20) {
+                        iGestures = 5;
                     }
                 }
                 
+                // circle gesture
                 else if (gestures[i].type() == Leap::Gesture::TYPE_CIRCLE) {
                     Leap::CircleGesture circle = gestures[i];
                     float progress = circle.progress();
@@ -183,23 +187,22 @@ class ofxLeapMotion : public Listener{
                         
                         if (curAngle < 0) {
                             // clockwise rotation
-                            iGestures = 7;
+                            iGestures = 8;
                         }
                         else {
                             // counter-clockwise rotation
-                            iGestures = 8;
-                        }                        
-                    }
-                    
-                    // it our state is 3, then turn off
-                    if (circle.state() == 3) {
-                        iGestures = 0;
+                            iGestures = 7;
+                        }
                     }
                     
                 }
-                // turn off gestures!
-                else {
-                    iGestures = 0;
+                
+                // kill gesture when done
+                // gestures 5 & 6 are always in a STATE_STOP so we exclude
+                if (gestures[i].type() != 5 && gestures[i].type() != 6) {
+                    if (gestures[i].state() == Leap::Gesture::STATE_STOP) {
+                        iGestures = 0;
+                    }
                 }
             }
         }
@@ -374,3 +377,5 @@ class ofxLeapMotion : public Listener{
 			
 			Poco::FastMutex ourMutex;
 };
+
+
