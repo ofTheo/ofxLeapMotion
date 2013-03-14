@@ -154,20 +154,30 @@ class ofxLeapMotion : public Listener{
                     ofVec3f curSwipe(diff.x, -diff.y, diff.z);
                     
                     // swipe left
-                    if (curSwipe.x < -1 && curSwipe.y < 2) {
+                    if (curSwipe.x < -3 && curSwipe.x > -20) {
                         iGestures = 4;
                     }
                     // swipe right
-                    else if (curSwipe.x > 1 && curSwipe.y < 2) {
+                    else if (curSwipe.x > 3 && curSwipe.x < 20) {
                         iGestures = 3;
                     }
                     // swipe up
-                    if (curSwipe.y < -1 && curSwipe.y > -20 && curSwipe.y < 0) {
+                    if (curSwipe.y < -3 && curSwipe.y > -20) {
                         iGestures = 6;
                     }
                     // swipe down
-                    else if (curSwipe.y > 1 && curSwipe.y > 0 && curSwipe.y < 20) {
+                    else if (curSwipe.y > 3 && curSwipe.y < 20) {
                         iGestures = 5;
+                    }
+                    
+                    // 3D swiping
+                    // swipe forward
+                    if (curSwipe.z < -5) {
+                        iGestures = 7;
+                    }
+                    // swipe back
+                    else if (curSwipe.z > 5) {
+                        iGestures = 8;
                     }
                 }
                 
@@ -187,11 +197,11 @@ class ofxLeapMotion : public Listener{
                         
                         if (curAngle < 0) {
                             // clockwise rotation
-                            iGestures = 8;
+                            iGestures = 10;
                         }
                         else {
                             // counter-clockwise rotation
-                            iGestures = 7;
+                            iGestures = 9;
                         }
                     }
                     
