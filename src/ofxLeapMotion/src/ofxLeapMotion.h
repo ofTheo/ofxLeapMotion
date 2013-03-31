@@ -79,13 +79,17 @@ class ofxLeapMotion : public Listener{
 
 		~ofxLeapMotion(){
 			//note we don't delete the controller as it causes a crash / mutex exception. 
-			close();
+			/// close(); /// JRW - we do not need this
 		}
 		
 		void close(){
 			if( ourController ){
 				ourController->removeListener(*this);
 			}
+			
+			/// JRW - let's delete our Leap controller
+			/// call close() on app exit
+			delete ourController;
 		}
 
 		//--------------------------------------------------------------
