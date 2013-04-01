@@ -1285,7 +1285,7 @@ class KeyTapGesture : public Gesture
  * You can get the point of intersection between the screen and a ray
  * projected from a Pointable object using the Screen::intersect() function.
  * Likewise, you can get the closest point on the screen to a point in space
- * using the Screen::distanceToPoint() function. Again, the screen location
+ * using the Screen::project() function. Again, the screen location
  * must be registered with the Screen Locator for these functions to
  * return accurate values.
  *
@@ -1355,7 +1355,7 @@ class Screen : public Interface {
      * (i.e. it is pointing parallel to or away from the screen), then the
      * components of the returned vector are all set to NaN (not-a-number).
      *
-     * @param pointable The pointing finger or tool.
+     * @param pointable The Pointable object to check for screen intersection.
      *
      * @param normalize If true, return normalized coordinates representing
      * the intersection point as a percentage of the screen's width and height.
@@ -1375,9 +1375,126 @@ class Screen : public Interface {
      * the closest point on the clamping border before the vector is returned.
      *
      * @returns A Vector containing the coordinates of the intersection between
-     * this Screen and a ray projecting from the specified Pointable object.
+     * this screen and a ray projecting from the specified Pointable object.
      */
     LEAP_EXPORT Vector intersect(const Pointable& pointable, bool normalize, float clampRatio = 1.0f) const;
+
+    /**
+     * Returns the intersection between this screen and a ray projecting from
+     * the specified position along the specified direction.
+     *
+     * Set the normalize parameter to true to request the intersection point in
+     * normalized screen coordinates. Normalized screen coordinates are usually
+     * values between 0 and 1, where 0 represents the screen's origin at the
+     * bottom-left corner and 1 represents the opposite edge (either top or
+     * right). When you request normalized coordinates, the z-component of the
+     * returned vector is zero. Multiply a normalized coordinate by the values
+     * returned by Screen::widthPixels() or Screen::heightPixels() to calculate
+     * the screen position in pixels (remembering that many other computer
+     * graphics coordinate systems place the origin in the top-left corner).
+     *
+     * Set the normalize parameter to false to request the intersection point
+     * in Leap coordinates (millimeters from the Leap origin).
+     *
+     * If the specified ray points outside the screen's border (but still
+     * intersects the plane in which the screen lies), the returned intersection
+     * point is clamped to the nearest point on the edge of the screen.
+     *
+     * You can use the clampRatio parameter to contract or expand the area in
+     * which you can point. For example, if you set the clampRatio parameter to
+     * 0.5, then the positions reported for intersection points outside the
+     * central 50% of the screen are moved to the border of this smaller area.
+     * If, on the other hand, you expanded the area by setting clampRatio to
+     * a value such as 3.0, then you could point well outside screen's physical
+     * boundary before the intersection points would be clamped. The positions
+     * for any points clamped would also be placed on this larger outer border.
+     * The positions reported for any intersection points inside the clamping
+     * border are unaffected by clamping.
+     *
+     * If the specified ray does not point toward the plane of the screen
+     * (i.e. it is pointing parallel to or away from the screen), then the
+     * components of the returned vector are all set to NaN (not-a-number).
+     *
+     * @param position The position from which to check for screen intersection.
+     * @param direction The direction in which to check for screen intersection.
+     *
+     * @param normalize If true, return normalized coordinates representing
+     * the intersection point as a percentage of the screen's width and height.
+     * If false, return Leap coordinates (millimeters from the Leap origin,
+     * which is located at the center of the top surface of the Leap device).
+     * If true and the clampRatio parameter is set to 1.0, coordinates will be
+     * of the form (0..1, 0..1, 0). Setting the clampRatio to a different value
+     * changes the range for normalized coordinates. For example, a clampRatio
+     * of 5.0 changes the range of values to be of the form (-2..3, -2..3, 0).
+     *
+     * @param clampRatio Adjusts the clamping border around this screen.
+     * By default this ratio is 1.0, and the border corresponds to the actual
+     * boundaries of the screen. Setting clampRatio to 0.5 would reduce the
+     * interaction area. Likewise, setting the ratio to 2.0 would increase the
+     * interaction area, adding 50% around each edge of the physical monitor.
+     * Intersection points outside the interaction area are repositioned to
+     * the closest point on the clamping border before the vector is returned.
+     *
+     * @returns A Vector containing the coordinates of the intersection between
+     * this screen and a ray projecting from the specified position in the
+     * specified direction.
+     */
+    LEAP_EXPORT Vector intersect(const Vector& position, const Vector& direction, bool normalize, float clampRatio = 1.0f) const;
+
+    /**
+     * Returns the projection from the specified position onto this screen.
+     *
+     * Set the normalize parameter to true to request the projection point in
+     * normalized screen coordinates. Normalized screen coordinates are usually
+     * values between 0 and 1, where 0 represents the screen's origin at the
+     * bottom-left corner and 1 represents the opposite edge (either top or
+     * right). When you request normalized coordinates, the z-component of the
+     * returned vector is zero. Multiply a normalized coordinate by the values
+     * returned by Screen::widthPixels() or Screen::heightPixels() to calculate
+     * the screen position in pixels (remembering that many other computer
+     * graphics coordinate systems place the origin in the top-left corner).
+     *
+     * Set the normalize parameter to false to request the projection point
+     * in Leap coordinates (millimeters from the Leap origin).
+     *
+     * If the specified point projects outside the screen's border, the returned
+     * projection point is clamped to the nearest point on the edge of the screen.
+     *
+     * You can use the clampRatio parameter to contract or expand the area in
+     * which you can point. For example, if you set the clampRatio parameter to
+     * 0.5, then the positions reported for projection points outside the
+     * central 50% of the screen are moved to the border of this smaller area.
+     * If, on the other hand, you expanded the area by setting clampRatio to
+     * a value such as 3.0, then you could point well outside screen's physical
+     * boundary before the projection points would be clamped. The positions
+     * for any points clamped would also be placed on this larger outer border.
+     * The positions reported for any projection points inside the clamping
+     * border are unaffected by clamping.
+     *
+     * @param position The position from which to project onto this screen.
+     *
+     * @param normalize If true, return normalized coordinates representing
+     * the projection point as a percentage of the screen's width and height.
+     * If false, return Leap coordinates (millimeters from the Leap origin,
+     * which is located at the center of the top surface of the Leap device).
+     * If true and the clampRatio parameter is set to 1.0, coordinates will be
+     * of the form (0..1, 0..1, 0). Setting the clampRatio to a different value
+     * changes the range for normalized coordinates. For example, a clampRatio
+     * of 5.0 changes the range of values to be of the form (-2..3, -2..3, 0).
+     *
+     * @param clampRatio Adjusts the clamping border around this screen.
+     * By default this ratio is 1.0, and the border corresponds to the actual
+     * boundaries of the screen. Setting clampRatio to 0.5 would reduce the
+     * interaction area. Likewise, setting the ratio to 2.0 would increase the
+     * interaction area, adding 50% around each edge of the physical monitor.
+     * Projection points outside the interaction area are repositioned to
+     * the closest point on the clamping border before the vector is returned.
+     *
+     * @returns A Vector containing the coordinates of the projection between
+     * this screen and a ray projecting from the specified position onto the
+     * screen along its normal vector.
+     */
+    LEAP_EXPORT Vector project(const Vector& position, bool normalize, float clampRatio = 1.0f) const;
 
     /**
      * A Vector representing the horizontal axis of this Screen within the
@@ -1476,7 +1593,7 @@ class Screen : public Interface {
      * Returns an invalid Screen object.
      *
      * You can use the instance returned by this function in comparisons testing
-     * whether a given Hand instance is valid or invalid. (You can also use the
+     * whether a given Screen instance is valid or invalid. (You can also use the
      * Screen::isValid() function.)
      *
      * @returns The invalid Screen instance.
@@ -1843,8 +1960,7 @@ class ScreenList : public Interface {
      * and returns the Screen with the closest intersection.
      *
      * If no intersections are found (i.e. the ray is directed parallel to or
-     * away from all known screens), then an invalid Screen object is
-     * returned.
+     * away from all known screens), then an invalid Screen object is returned.
      *
      * *Note:* Be sure to test whether the Screen object returned by this method
      * is valid. Attempting to use an invalid Screen object will lead to
@@ -1856,6 +1972,44 @@ class ScreenList : public Interface {
      * any known screen, an invalid Screen object.
      */
     LEAP_EXPORT Screen closestScreenHit(const Pointable& pointable) const;
+
+    /**
+     * Gets the closest Screen intercepting a ray projecting from the specified
+     * position in the specified direction.
+     *
+     * The projected ray emanates from the position along the direction vector.
+     * If the projected ray does not intersect any screen surface directly,
+     * then the Leap checks for intersection with the planes extending from the
+     * surfaces of the known screens and returns the Screen with the closest
+     * intersection.
+     *
+     * If no intersections are found (i.e. the ray is directed parallel to or
+     * away from all known screens), then an invalid Screen object is returned.
+     *
+     * *Note:* Be sure to test whether the Screen object returned by this method
+     * is valid. Attempting to use an invalid Screen object will lead to
+     * incorrect results.
+     *
+     * @param position The position from which to check for screen intersection.
+     * @param direction The direction in which to check for screen intersection.
+     * @returns The closest Screen toward which the specified ray is pointing,
+     * or, if the ray is not pointing in the direction of any known screen,
+     * an invalid Screen object.
+     */
+    LEAP_EXPORT Screen closestScreenHit(const Vector& position, const Vector& direction) const;
+
+    /**
+     * Gets the Screen closest to the specified position.
+     *
+     * The specified position is projected along each screen's normal vector
+     * onto the screen's plane. The screen whose projected point is closest to
+     * the specified position is returned. Call Screen::intersect(position)
+     * on the returned Screen object to find the projected point.
+     *
+     * @param position The position from which to check for screen projection.
+     * @returns The closest Screen onto which the specified position is projected.
+     */
+    LEAP_EXPORT Screen closestScreen(const Vector& position) const;
 };
 
 /**
@@ -2393,7 +2547,7 @@ class Controller : public Interface {
      * You can either handle the onConnect event using a Listener instance or
      * poll the isConnected() function if you need to wait for your
      * application to be connected to the Leap before performing some other
-     * gesture.
+     * operation.
      *
      * @returns True, if connected; false otherwise.
      */
@@ -2561,6 +2715,10 @@ class Listener {
      *     void SampleListener::onDisconnect(const Controller& controller) {
      *         std::cout << "Disconnected" << std::endl;
      *     }
+     *
+     * Note: When you launch a Leap-enabled application in a debugger, the
+     * Leap library does not disconnect from the application. This is to allow
+     * you to step through code without losing the connection because of time outs.
      *
      * @param controller The Controller object invoking this callback function.
      */

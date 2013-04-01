@@ -30,7 +30,7 @@ static const float DEG_TO_RAD  = 0.0174532925f;
  */
 static const float RAD_TO_DEG  = 57.295779513f;
 #endif
-    
+
 /**
  * The Vector struct represents a three-component mathematical vector or point
  * such as a direction or position in three-dimensional space.

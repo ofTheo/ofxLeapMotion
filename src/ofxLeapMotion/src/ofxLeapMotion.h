@@ -79,7 +79,9 @@ class ofxLeapMotion : public Listener{
 
 		~ofxLeapMotion(){
 			//note we don't delete the controller as it causes a crash / mutex exception. 
-			/// close(); /// JRW - we do not need this
+			/// close(); /// JRW - we do not need this...
+                         /// JRW - seems fine in this demo but, when I add
+                         /// JRW - threaded objects the Leap controller crashes on exit.
 		}
 		
 		void close(){
@@ -235,6 +237,11 @@ class ofxLeapMotion : public Listener{
 		virtual void onDisconnect(const Controller& contr){
 			ofLogWarning("ofxLeapMotionApp - onDisconnect"); 
 		}
+    
+        //--------------------------------------------------------------
+        virtual void onExit(const Controller& contr){
+            ofLogWarning("ofxLeapMotionApp - onExit");
+        }
 		
 		//if you want to use the Leap Controller directly - inhereit ofxLeapMotion and implement this function
 		//note: this function is called in a seperate thread - so GL commands here will cause the app to crash. 
