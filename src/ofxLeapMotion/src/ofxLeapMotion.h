@@ -22,7 +22,7 @@ class ofxLeapMotionSimpleHand{
     vector <simpleFinger>  fingers;
     
     ofPoint handPos; 
-    ofPoint handNormal; 
+    ofPoint handNormal;
     
     void debugDraw(){
         ofPushStyle();
@@ -62,6 +62,9 @@ class ofxLeapMotionSimpleHand{
 
 class ofxLeapMotion : public Listener{
 	public:
+    
+    // TODO: adding leap gesture support - JRW
+    int iGestures;
 	
 		ofxLeapMotion(){
             reset();
@@ -76,13 +79,19 @@ class ofxLeapMotion : public Listener{
 
 		~ofxLeapMotion(){
 			//note we don't delete the controller as it causes a crash / mutex exception. 
-			close();
+			/// close(); /// JRW - we do not need this...
+                         /// JRW - seems fine in this demo but, when I add
+                         /// JRW - threaded objects the Leap controller crashes on exit.
 		}
 		
 		void close(){
 			if( ourController ){
 				ourController->removeListener(*this);
 			}
+			
+			/// JRW - let's delete our Leap controller
+			/// call close() on app exit
+			delete ourController;
 		}
 
 		//--------------------------------------------------------------
@@ -90,7 +99,130 @@ class ofxLeapMotion : public Listener{
             reset();
 			ourController->addListener(*this);
 		}
-		
+    
+        // TODO: adding leap gesture support - JRW
+        //--------------------------------------------------------------
+        void setupGestures(){
+            // enables screen tap gesture (forward poke / tap)
+            ourController->enableGesture(Gesture::TYPE_SCREEN_TAP);
+            
+            // enables key tap gesture (down tap)
+            ourController->enableGesture(Gesture::TYPE_KEY_TAP);
+            
+            // enables swipe gesture
+            ourController->enableGesture(Gesture::TYPE_SWIPE);
+            
+            // enables circle gesture
+            ourController->enableGesture(Gesture::TYPE_CIRCLE);
+        }
+    
+        // TODO: adding leap gesture support - JRW
+        //--------------------------------------------------------------
+        void updateGestures(){
+            
+            Leap::Frame frame = ourController->frame();
+            
+            if (lastFrame == frame) {
+                return;
+            }
+            
+            Leap::GestureList gestures = lastFrame.isValid()    ?
+            frame.gestures(lastFrame) :
+            frame.gestures();
+            
+            lastFrame = frame;
+            
+            size_t numGestures = gestures.count();
+            
+            for (size_t i=0; i < numGestures; i++) {
+                
+                // screen tap gesture (forward poke / tap)
+                if (gestures[i].type() == Leap::Gesture::TYPE_SCREEN_TAP) {
+                    Leap::ScreenTapGesture tap = gestures[i];
+                    ofVec3f tapLoc = getMappedofPoint(tap.position());
+                    
+                    iGestures = 1;
+                    
+                }
+                
+                // key tap gesture (down tap)
+                else if (gestures[i].type() == Leap::Gesture::TYPE_KEY_TAP) {
+                    Leap::KeyTapGesture tap = gestures[i];
+                    
+                    iGestures = 2;
+                    
+                }
+                
+                // swipe gesture
+                else if (gestures[i].type() == Leap::Gesture::TYPE_SWIPE) {
+                    Leap::SwipeGesture swipe = gestures[i];
+                    Leap::Vector diff = 0.04f*(swipe.position() - swipe.startPosition());
+                    ofVec3f curSwipe(diff.x, -diff.y, diff.z);
+                    
+                    // swipe left
+                    if (curSwipe.x < -3 && curSwipe.x > -20) {
+                        iGestures = 4;
+                    }
+                    // swipe right
+                    else if (curSwipe.x > 3 && curSwipe.x < 20) {
+                        iGestures = 3;
+                    }
+                    // swipe up
+                    if (curSwipe.y < -3 && curSwipe.y > -20) {
+                        iGestures = 6;
+                    }
+                    // swipe down
+                    else if (curSwipe.y > 3 && curSwipe.y < 20) {
+                        iGestures = 5;
+                    }
+                    
+                    // 3D swiping
+                    // swipe forward
+                    if (curSwipe.z < -5) {
+                        iGestures = 7;
+                    }
+                    // swipe back
+                    else if (curSwipe.z > 5) {
+                        iGestures = 8;
+                    }
+                }
+                
+                // circle gesture
+                else if (gestures[i].type() == Leap::Gesture::TYPE_CIRCLE) {
+                    Leap::CircleGesture circle = gestures[i];
+                    float progress = circle.progress();
+
+                    if (progress >= 1.0f) {
+                        
+                        ofVec3f center = getMappedofPoint(circle.center());
+                        ofVec3f normal(circle.normal().x, circle.normal().y, circle.normal().z);
+                        double curAngle = 6.5;
+                        if (normal.z < 0) {
+                            curAngle *= -1;
+                        }
+                        
+                        if (curAngle < 0) {
+                            // clockwise rotation
+                            iGestures = 10;
+                        }
+                        else {
+                            // counter-clockwise rotation
+                            iGestures = 9;
+                        }
+                    }
+                    
+                }
+                
+                // kill gesture when done
+                // gestures 5 & 6 are always in a STATE_STOP so we exclude
+                if (gestures[i].type() != 5 && gestures[i].type() != 6) {
+                    if (gestures[i].state() == Leap::Gesture::STATE_STOP) {
+                        iGestures = 0;
+                    }
+                }
+            }
+        }
+    
 		//--------------------------------------------------------------
 		virtual void onInit(const Controller& controller){
 			ofLogVerbose("ofxLeapMotionApp - onInit"); 
@@ -105,12 +237,17 @@ class ofxLeapMotion : public Listener{
 		virtual void onDisconnect(const Controller& contr){
 			ofLogWarning("ofxLeapMotionApp - onDisconnect"); 
 		}
+    
+        //--------------------------------------------------------------
+        virtual void onExit(const Controller& contr){
+            ofLogWarning("ofxLeapMotionApp - onExit");
+        }
 		
 		//if you want to use the Leap Controller directly - inhereit ofxLeapMotion and implement this function
 		//note: this function is called in a seperate thread - so GL commands here will cause the app to crash. 
 		//-------------------------------------------------------------- 
 		virtual void onFrame(const Controller& contr){
-			ofLogVerbose("ofxLeapMotionApp - onFrame"); 
+			ofLogVerbose("ofxLeapMotionApp - onFrame");
 
 			onFrameInternal(contr); // call this if you want to use getHands() / isFrameNew() etc 
 		}
@@ -255,6 +392,9 @@ class ofxLeapMotion : public Listener{
 			 
 			vector <Hand> hands; 
 			Leap::Controller * ourController;
+    
+            // TODO: added for Gesture support - JRW
+            Leap::Frame lastFrame;
 			
 			Poco::FastMutex ourMutex;
 };
