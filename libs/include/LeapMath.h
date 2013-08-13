@@ -16,18 +16,25 @@
 
 namespace Leap {
 
-#ifndef PI
 /** The constant pi as a single precision floating point number. */
+#ifndef PI
 static const float PI          = 3.1415926536f;
+#endif
+
 /**
  * The constant ratio to convert an angle measure from degrees to radians.
  * Multiply a value in degrees by this constant to convert to radians.
  */
+#ifndef DEG_TO_RAD
 static const float DEG_TO_RAD  = 0.0174532925f;
+#endif
+
 /**
  * The constant ratio to convert an angle measure from radians to degrees.
  * Multiply a value in radians by this constant to convert to degrees.
  */
+ 
+#ifndef RAD_TO_DEG
 static const float RAD_TO_DEG  = 57.295779513f;
 #endif
 
@@ -35,9 +42,9 @@ static const float RAD_TO_DEG  = 57.295779513f;
  * The Vector struct represents a three-component mathematical vector or point
  * such as a direction or position in three-dimensional space.
  *
- * The Leap software employs a right-handed Cartesian coordinate system.
+ * The Leap Motion software employs a right-handed Cartesian coordinate system.
  * Values given are in units of real-world millimeters. The origin is centered
- * at the center of the Leap device. The x- and z-axes lie in the horizontal
+ * at the center of the Leap Motion device. The x- and z-axes lie in the horizontal
  * plane, with the x-axis running parallel to the long edge of the device.
  * The y-axis is vertical, with positive values increasing upwards (in contrast
  * to the downward orientation of most computer graphics coordinate systems).
@@ -46,73 +53,125 @@ static const float RAD_TO_DEG  = 57.295779513f;
  * \image html images/Leap_Axes.png
  */
 struct Vector {
-  /** Creates a new Vector with all components set to zero. */
+  /**
+   * Creates a new Vector with all components set to zero.
+   */
   Vector() :
     x(0), y(0), z(0) {}
 
-  /** Creates a new Vector with the specified component values. */
+  /**
+   * Creates a new Vector with the specified component values.
+   *
+   * \include Vector_Constructor_1.txt
+   */
   Vector(float _x, float _y, float _z) :
     x(_x), y(_y), z(_z) {}
 
-  /** Copies the specified Vector. */
+  /**
+   * Copies the specified Vector.
+   *
+   * \include Vector_Constructor_2.txt
+   */
   Vector(const Vector& vector) :
     x(vector.x), y(vector.y), z(vector.z) {}
 
-  /** The zero vector: (0, 0, 0) */
+  /**
+   * The zero vector: (0, 0, 0)
+   *
+   * \include Vector_Zero.txt
+   */
   static const Vector& zero() {
     static Vector s_zero(0, 0, 0);
     return s_zero;
   }
 
-  /** The x-axis unit vector: (1, 0, 0) */
+  /**
+   * The x-axis unit vector: (1, 0, 0)
+   *
+   * \include Vector_XAxis.txt
+   */
   static const Vector& xAxis() {
     static Vector s_xAxis(1, 0, 0);
     return s_xAxis;
   }
-  /** The y-axis unit vector: (0, 1, 0) */
+  /**
+   * The y-axis unit vector: (0, 1, 0)
+   *
+   * \include Vector_YAxis.txt
+   */
   static const Vector& yAxis() {
     static Vector s_yAxis(0, 1, 0);
     return s_yAxis;
   }
-  /** The z-axis unit vector: (0, 0, 1) */
+  /**
+   * The z-axis unit vector: (0, 0, 1)
+   *
+   * \include Vector_ZAxis.txt
+   */
   static const Vector& zAxis() {
     static Vector s_zAxis(0, 0, 1);
     return s_zAxis;
   }
 
-  /** The unit vector pointing left along the negative x-axis: (-1, 0, 0) */
+  /**
+   * The unit vector pointing left along the negative x-axis: (-1, 0, 0)
+   *
+   * \include Vector_Left.txt
+   */
   static const Vector& left() {
     static Vector s_left(-1, 0, 0);
     return s_left;
   }
-  /** The unit vector pointing right along the positive x-axis: (1, 0, 0) */
+  /**
+   * The unit vector pointing right along the positive x-axis: (1, 0, 0)
+   *
+   * \include Vector_Right.txt
+   */
   static const Vector& right() {
     return xAxis();
   }
-  /** The unit vector pointing down along the negative y-axis: (0, -1, 0) */
+  /**
+   * The unit vector pointing down along the negative y-axis: (0, -1, 0)
+   *
+   * \include Vector_Down.txt
+   */
   static const Vector& down() {
     static Vector s_down(0, -1, 0);
     return s_down;
   }
-  /** The unit vector pointing up along the positive y-axis: (0, 1, 0) */
+  /**
+   * The unit vector pointing up along the positive y-axis: (0, 1, 0)
+   *
+   * \include Vector_Up.txt
+   */
   static const Vector& up() {
     return yAxis();
   }
-  /** The unit vector pointing forward along the negative z-axis: (0, 0, -1) */
+  /**
+   * The unit vector pointing forward along the negative z-axis: (0, 0, -1)
+   *
+   * \include Vector_Forward.txt
+   */
   static const Vector& forward() {
     static Vector s_forward(0, 0, -1);
     return s_forward;
   }
-  /** The unit vector pointing backward along the positive z-axis: (0, 0, 1) */
+  /**
+   * The unit vector pointing backward along the positive z-axis: (0, 0, 1)
+   *
+   * \include Vector_Backward.txt
+   */
   static const Vector& backward() {
     return zAxis();
   }
 
   /**
-   *The magnitude, or length, of this vector.
+   * The magnitude, or length, of this vector.
    *
    * The magnitude is the L2 norm, or Euclidean distance between the origin and
    * the point represented by the (x, y, z) components of this Vector object.
+   *
+   * \include Vector_Magnitude.txt
    *
    * @returns The length of this vector.
    */
@@ -121,7 +180,9 @@ struct Vector {
   }
 
   /**
-   *The square of the magnitude, or length, of this vector.
+   * The square of the magnitude, or length, of this vector.
+   *
+   * \include Vector_Magnitude_Squared.txt
    *
    * @returns The square of the length of this vector.
    */
@@ -132,6 +193,8 @@ struct Vector {
   /**
    * The distance between the point represented by this Vector
    * object and a point represented by the specified Vector object.
+   *
+   * \include Vector_DistanceTo.txt
    *
    * @param other A Vector object.
    * @returns The distance from this point to the specified point.
@@ -153,6 +216,8 @@ struct Vector {
    * If either vector has zero length, then this function returns zero.
    *
    * \image html images/Math_AngleTo.png
+   *
+   * \include Vector_AngleTo.txt
    *
    * @param other A Vector object.
    * @returns The angle between this vector and the specified vector in radians.
@@ -176,6 +241,8 @@ struct Vector {
    *
    * \image html images/Math_Pitch_Angle.png
    *
+   * \include Vector_Pitch.txt
+   *
    * @returns The angle of this vector above or below the horizon (x-z plane).
    */
   float pitch() const {
@@ -192,6 +259,8 @@ struct Vector {
    * if it points to the left, the angle is between 0 and -pi radians.
    *
    * \image html images/Math_Yaw_Angle.png
+   *
+   * \include Vector_Yaw.txt
    *
    * @returns The angle of this vector to the right or left of the negative z-axis.
    */
@@ -215,6 +284,8 @@ struct Vector {
    * then this function returns the tilt or roll of the palm plane compared
    * to the horizontal (x-z) plane.
    *
+   * \include Vector_Roll.txt
+   *
    * @returns The angle of this vector to the right or left of the y-axis.
    */
   float roll() const {
@@ -228,6 +299,8 @@ struct Vector {
    * onto the specified vector.
    *
    * \image html images/Math_Dot.png
+   *
+   * \include Vector_Dot.txt
    *
    * @param other A Vector object.
    * @returns The dot product of this vector and the specified vector.
@@ -246,6 +319,8 @@ struct Vector {
    *
    * \image html images/Math_Cross.png
    *
+   * \include Vector_Cross.txt
+   *
    * @param other A Vector object.
    * @returns The cross product of this vector and the specified vector.
    */
@@ -260,6 +335,8 @@ struct Vector {
    *
    * A normalized vector has the same direction as the original vector,
    * but with a length of one.
+   *
+   * \include Vector_Normalized.txt
    *
    * @returns A Vector object with a length of one, pointing in the same
    * direction as this Vector object.
@@ -276,34 +353,56 @@ struct Vector {
   /**
    *  A copy of this vector pointing in the opposite direction.
    *
+   * \include Vector_Negate.txt
+   *
    * @returns A Vector object with all components negated.
    */
   Vector operator-() const {
     return Vector(-x, -y, -z);
   }
 
-  /** Add vectors component-wise. */
+  /**
+   * Add vectors component-wise.
+   *
+   * \include Vector_Plus.txt
+   */
   Vector operator+(const Vector& other) const {
     return Vector(x + other.x, y + other.y, z + other.z);
   }
 
-  /** Subtract vectors component-wise. */
+  /**
+   * Subtract vectors component-wise.
+   *
+   * \include Vector_Minus.txt
+   */
   Vector operator-(const Vector& other) const {
     return Vector(x - other.x, y - other.y, z - other.z);
   }
 
-  /** Multiply vector by a scalar. */
+  /**
+   * Multiply vector by a scalar.
+   *
+   * \include Vector_Times.txt
+   */
   Vector operator*(float scalar) const {
     return Vector(x * scalar, y * scalar, z * scalar);
   }
 
-  /** Divide vector by a scalar. */
+  /**
+   * Divide vector by a scalar.
+   *
+   * \include Vector_Divide.txt
+   */
   Vector operator/(float scalar) const {
     return Vector(x / scalar, y / scalar, z / scalar);
   }
 
-  /** Multiply vector by a scalar on the left-hand side (C++ only). */
 #if !defined(SWIG)
+  /**
+    * Multiply vector by a scalar on the left-hand side (C++ only).
+    *
+    * \include Vector_Left_Times.txt
+    */
   friend Vector operator*(float scalar, const Vector& vector) {
     return Vector(vector.x * scalar, vector.y * scalar, vector.z * scalar);
   }
@@ -352,11 +451,19 @@ struct Vector {
     return out << vector.toString();
   }
 
-  /** Compare Vector equality component-wise. */
+  /**
+   * Compare Vector equality component-wise.
+   *
+   * \include Vector_Equals.txt
+   */
   bool operator==(const Vector& other) const {
     return x == other.x && y == other.y && z == other.z;
   }
-  /** Compare Vector inequality component-wise. */
+  /**
+   * Compare Vector inequality component-wise.
+   *
+   * \include Vector_NotEqual.txt
+   */
   bool operator!=(const Vector& other) const {
     return x != other.x || y != other.y || z != other.z;
   }
@@ -364,6 +471,8 @@ struct Vector {
   /**
    *  Returns true if all of the vector's components are finite.  If any
    * component is NaN or infinite, then this returns false.
+   *
+   * \include Vector_IsValid.txt
    */
   bool isValid() const {
     return (x <= FLT_MAX && x >= -FLT_MAX) &&
@@ -376,12 +485,18 @@ struct Vector {
    * Index 0 is x, index 1 is y, and index 2 is z.
    * @returns The x, y, or z component of this Vector, if the specified index
    * value is at least 0 and at most 2; otherwise, returns zero.
+   *
+   * \include Vector_Index.txt
    */
   float operator[](unsigned int index) const {
     return index < 3 ? (&x)[index] : 0.0f;
   }
 
-  /** Cast the vector to a float array. */
+  /**
+   * Cast the vector to a float array.
+   *
+   * \include Vector_ToFloatPointer.txt
+   */
   const float* toFloatPointer() const {
     return &x; /* Note: Assumes x, y, z are aligned in memory. */
   }
@@ -541,18 +656,18 @@ struct Matrix
    * This function erases any previous rotation and scale transforms applied
    * to this matrix, but does not affect translation.
    *
-   * @param _axis A Vector specifying the axis of rotation.
+   * @param axis A Vector specifying the axis of rotation.
    * @param angleRadians The amount of rotation in radians.
    */
-  void setRotation(const Vector& _axis, float angleRadians) {
-    const Vector axis = _axis.normalized();
+  void setRotation(const Vector& axis, float angleRadians) {
+    const Vector n = axis.normalized();
     const float s = std::sin(angleRadians);
     const float c = std::cos(angleRadians);
     const float C = (1-c);
 
-    xBasis = Vector(axis[0]*axis[0]*C + c, axis[0]*axis[1]*C - axis[2]*s, axis[0]*axis[2]*C + axis[1]*s);
-    yBasis = Vector(axis[1]*axis[0]*C + axis[2]*s, axis[1]*axis[1]*C + c, axis[1]*axis[2]*C - axis[0]*s);
-    zBasis = Vector(axis[2]*axis[0]*C - axis[1]*s, axis[2]*axis[1]*C + axis[0]*s, axis[2]*axis[2]*C + c);
+    xBasis = Vector(n[0]*n[0]*C + c,      n[0]*n[1]*C - n[2]*s, n[0]*n[2]*C + n[1]*s);
+    yBasis = Vector(n[1]*n[0]*C + n[2]*s, n[1]*n[1]*C + c,      n[1]*n[2]*C - n[0]*s);
+    zBasis = Vector(n[2]*n[0]*C - n[1]*s, n[2]*n[1]*C + n[0]*s, n[2]*n[2]*C + c     );
   }
 
   /**
