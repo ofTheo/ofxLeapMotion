@@ -14,7 +14,7 @@ void testApp::setup(){
     ofSetFrameRate(60);
     ofSetVerticalSync(true);
 	ofSetLogLevel(OF_LOG_VERBOSE);
-
+    
 	leap.open();
     
     leap.setupGestures();   // we enable our gesture detection here
@@ -53,42 +53,52 @@ void testApp::draw(){
     switch (leap.iGestures) {
         case 1:
             msg = "Screen Tap";
+            msg += "\nPosition: "+ofToString(leap.screenTapPosition);
             break;
             
         case 2:
             msg = "Key Tap";
+            msg += "\nPosition: " + ofToString(leap.keyTapPosition);
             break;
             
         case 3:
             msg = "Swipe Right";
+            msg += "\nSwipe Speed mm/s: " + ofToString(leap.swipeSpeed) + "\nDuration sec's: "+ofToString(leap.swipeDurationSeconds);
             break;
             
         case 4:
             msg = "Swipe Left";
+            msg += "\nSwipe Speed mm/s: " + ofToString(leap.swipeSpeed) + "\nDuration sec's: "+ofToString(leap.swipeDurationSeconds);
             break;
             
         case 5:
             msg = "Swipe Down";
+            msg += "\nSwipe Speed mm/s: " + ofToString(leap.swipeSpeed) + "\nDuration sec's: "+ofToString(leap.swipeDurationSeconds);
             break;
             
         case 6:
             msg = "Swipe Up";
+            msg += "\nSwipe Speed mm/s: " + ofToString(leap.swipeSpeed) + "\nDuration sec's: "+ofToString(leap.swipeDurationSeconds);
             break;
             
         case 7:
             msg = "Swipe Forward";
+            msg += "\nSwipe Speed mm/s: " + ofToString(leap.swipeSpeed) + "\nDuration sec's: "+ofToString(leap.swipeDurationSeconds);
             break;
             
         case 8:
             msg = "Swipe Backwards";
+            msg += "\nSwipe Speed mm/s: " + ofToString(leap.swipeSpeed) + "\nDuration sec's: "+ofToString(leap.swipeDurationSeconds);
             break;
             
         case 9:
             msg = "Circle Left";
+            msg += "\nCircle Radius: " + ofToString(leap.circleRadius) + "\nCircle Center: "+ofToString(leap.circleCenter);
             break;
             
         case 10:
             msg = "Circle Right";
+            msg += "\nCircle Radius: " + ofToString(leap.circleRadius) + "\nCircle Center: "+ofToString(leap.circleCenter);
             break;
             
         default:
