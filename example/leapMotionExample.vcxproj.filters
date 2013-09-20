@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\testApp.cpp" />
+    <ClCompile Include="..\src\ofxLeapMotion.cpp">
+      <Filter>addons\ofxLeapMotion\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxStrip\ofxStrip.cpp">
+      <Filter>ofxStrip</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\testApp.h" />
+    <ClInclude Include="..\src\ofxLeapMotion.h">
+      <Filter>addons\ofxLeapMotion\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxStrip\ofxStrip.h">
+      <Filter>ofxStrip</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="addons">
+      <UniqueIdentifier>{d79abca0-5b91-4000-9e03-3b535f96d5b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxLeapMotion">
+      <UniqueIdentifier>{b78a8d94-2725-4f5e-8eba-babbe5284bed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxLeapMotion\src">
+      <UniqueIdentifier>{5ebe5ba9-8d2f-4c15-bbb6-ffa657974802}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ofxStrip">
+      <UniqueIdentifier>{9a9d7d55-03dc-4d8c-aefb-c5102b11b875}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
