@@ -9,30 +9,24 @@ cp -f ../../../addons/ofxLeapMotion/libs/lib/osx/libLeap.dylib "$TARGET_BUILD_DI
 */
 
 //--------------------------------------------------------------
-void testApp::setup(){
-
-    ofSetFrameRate(60);
-    ofSetVerticalSync(true);
+void testApp::setup()
+{
 	ofSetLogLevel(OF_LOG_VERBOSE);
-
 	leap.open();
-    
-    leap.setupGestures();   // we enable our gesture detection here
+	leap.setupGestures();   // we enable our gesture detection here
 }
 
 
 //--------------------------------------------------------------
-void testApp::update(){
-
-    leap.updateGestures();  // check for gesture updates
-
-	//IMPORTANT! - tell ofxLeapMotion that the frame is no longer new. 
-	leap.markFrameAsOld();	
+void testApp::update()
+{
+	leap.updateGestures();  // check for gesture updates
+	leap.markFrameAsOld();	//IMPORTANT! - tell ofxLeapMotion that the frame is no longer new. 
 }
 
 //--------------------------------------------------------------
-void testApp::draw(){
-    
+void testApp::draw()
+{
      /* Leap iGesture Key
      --------------------------------
      1 = Screen Tap
@@ -50,7 +44,8 @@ void testApp::draw(){
     
     string msg;
     
-    switch (leap.iGestures) {
+    switch (leap.iGestures)
+    {
         case 1:
             msg = "Screen Tap";
             break;
@@ -97,13 +92,10 @@ void testApp::draw(){
     }
     
     ofDrawBitmapString(msg, 20, 20);  // let's draw our message to the screen
-	
-	
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-  
 }
 
 //--------------------------------------------------------------
@@ -112,40 +104,34 @@ void testApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void testApp::mouseMoved(int x, int y ){
-
 }
 
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
-
 }
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-
 }
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
-    
 }
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
-    
 }
 
 //--------------------------------------------------------------
 void testApp::gotMessage(ofMessage msg){
-    
 }
 
 //--------------------------------------------------------------
 void testApp::dragEvent(ofDragInfo dragInfo){
-    
 }
 
 //--------------------------------------------------------------
-void testApp::exit(){
+void testApp::exit()
+{
     leap.close();  // let's close down Leap and kill the controller
 }
