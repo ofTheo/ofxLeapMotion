@@ -1,36 +1,48 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\testApp.cpp" />
-    <ClCompile Include="..\src\ofxLeapMotion.cpp">
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxLeapMotion\src\ofxLeapMotion.cpp">
       <Filter>addons\ofxLeapMotion\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\testApp.cpp">
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxStrip\ofxStrip.cpp">
-      <Filter>ofxStrip</Filter>
+      <Filter>src\ofxStrip</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\testApp.h" />
-    <ClInclude Include="..\src\ofxLeapMotion.h">
+    <Filter Include="src">
+      <UniqueIdentifier>{d8376475-7454-4a24-b08a-aac121d3ad6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons">
+      <UniqueIdentifier>{a4e23db6-d07e-48c3-8eed-060171ffdd70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxLeapMotion">
+      <UniqueIdentifier>{1c7c02bb-77b7-4234-a238-c24026ed35d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxLeapMotion\src">
+      <UniqueIdentifier>{f5693ab5-7380-42e6-8d6e-71da812d0618}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxStrip">
+      <UniqueIdentifier>{4a57958e-7e20-4d2d-84d7-b94a1a2d8754}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\addons\ofxLeapMotion\src\ofxLeapMotion.h">
       <Filter>addons\ofxLeapMotion\src</Filter>
     </ClInclude>
+    <ClInclude Include="src\testApp.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="src\ofxStrip\ofxStrip.h">
-      <Filter>ofxStrip</Filter>
+      <Filter>src\ofxStrip</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="addons">
-      <UniqueIdentifier>{d79abca0-5b91-4000-9e03-3b535f96d5b9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxLeapMotion">
-      <UniqueIdentifier>{b78a8d94-2725-4f5e-8eba-babbe5284bed}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxLeapMotion\src">
-      <UniqueIdentifier>{5ebe5ba9-8d2f-4c15-bbb6-ffa657974802}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ofxStrip">
-      <UniqueIdentifier>{9a9d7d55-03dc-4d8c-aefb-c5102b11b875}</UniqueIdentifier>
-    </Filter>
+    <ResourceCompile Include="icon.rc" />
   </ItemGroup>
 </Project>
