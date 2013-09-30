@@ -278,7 +278,7 @@ class ofxLeapMotion : public Listener{
                 curHand.handNormal  = getofPoint( leapHands[i].palmNormal() );
 
                 for(int j = 0; j < leapHands[i].fingers().count(); j++){
-                    const Finger & finger = hands[i].fingers()[j];
+                    const Finger & finger = leapHands[i].fingers()[j];
                 
                     ofxLeapMotionSimpleHand::simpleFinger f; 
                     f.pos = getMappedofPoint( finger.tipPosition() );
