@@ -293,6 +293,18 @@ class ofxLeapMotion : public Listener{
 
 			return simpleHands;
 		}
+    
+        //--------------------------------------------------------------
+        bool isConnected() {
+            return (ourController && ourController->isConnected());
+        }
+        
+        //--------------------------------------------------------------
+        bool setReceiveBackgroundFrames(bool bReceiveBg) {
+            if (ourController) {
+                ourController->setPolicyFlags(bReceiveBg? Leap::Controller::POLICY_BACKGROUND_FRAMES : Leap::Controller::POLICY_DEFAULT);
+            }
+        }
 
 		//-------------------------------------------------------------- 
 		bool isFrameNew(){
