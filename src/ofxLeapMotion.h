@@ -43,7 +43,7 @@ class ofxLeapMotionSimpleHand{
                 
                 //scale it to make it not a box
                 ofScale(1, 0.35, 1.0);
-                ofBox(0, 0, 0, 60);
+                ofDrawBox(0, 0, 0, 60);
             ofPopMatrix();
         
             
