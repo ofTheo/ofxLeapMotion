@@ -45,8 +45,6 @@ class ofxLeapMotionSimpleHand{
                 ofScale(1, 0.35, 1.0);
                 ofDrawBox(0, 0, 0, 60);
             ofPopMatrix();
-        
-            
             for(int i = 0; i < fingers.size(); i++){
                 ofDrawArrow(handPos, fingers[i].pos, 10);
             }
@@ -55,7 +53,9 @@ class ofxLeapMotionSimpleHand{
             for(int i = 0; i < fingers.size(); i++){
                 ofDrawArrow(fingers[i].pos + fingers[i].vel/20, fingers[i].pos + fingers[i].vel/10, 10);
             }
-            
+        
+            ofDisableLighting();
+        
         ofPopStyle();
     }
 };
