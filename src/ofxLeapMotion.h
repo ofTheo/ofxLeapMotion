@@ -300,7 +300,7 @@ class ofxLeapMotion : public Listener{
         }
         
         //--------------------------------------------------------------
-        bool setReceiveBackgroundFrames(bool bReceiveBg) {
+        void setReceiveBackgroundFrames(bool bReceiveBg) {
             if (ourController) {
                 ourController->setPolicyFlags(bReceiveBg? Leap::Controller::POLICY_BACKGROUND_FRAMES : Leap::Controller::POLICY_DEFAULT);
             }
