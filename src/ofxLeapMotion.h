@@ -43,7 +43,11 @@ class ofxLeapMotionSimpleHand{
                 
                 //scale it to make it not a box
                 ofScale(1, 0.35, 1.0);
+#if (OF_VERSION_MAJOR == 0) && (OF_VERSION_MINOR < 8)
+                ofBox(0, 0, 0, 60);
+#else
                 ofDrawBox(0, 0, 0, 60);
+#endif
             ofPopMatrix();
             for(int i = 0; i < fingers.size(); i++){
                 ofDrawArrow(handPos, fingers[i].pos, 10);
