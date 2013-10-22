@@ -125,7 +125,7 @@ void testApp::draw(){
     ofBackgroundGradient(ofColor(90, 90, 90), ofColor(30, 30, 30),  OF_GRADIENT_BAR);
 	
 	ofSetColor(200);
-	ofDrawBitmapString("ofxLeapMotion - Example App\nMake sure the Leap.app is running while running this example\nYou may need to restart Leap.app to get data", 20, 20);
+	ofDrawBitmapString("ofxLeapMotion - Example App\nLeap Connected? " + ofToString(leap.isConnected()), 20, 20);
 
 	cam.begin();	
 
