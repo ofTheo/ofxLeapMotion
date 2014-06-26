@@ -9,9 +9,12 @@ cp -f ../../../addons/ofxLeapMotion/libs/lib/osx/libLeap.dylib "$TARGET_BUILD_DI
 */
 
 //--------------------------------------------------------------
-void testApp::setup()
-{
+void testApp::setup(){
+
+    ofSetFrameRate(60);
+    ofSetVerticalSync(true);
 	ofSetLogLevel(OF_LOG_VERBOSE);
+    
 	leap.open();
 	leap.setupGestures();   // we enable our gesture detection here
 }
@@ -25,8 +28,8 @@ void testApp::update()
 }
 
 //--------------------------------------------------------------
-void testApp::draw()
-{
+void testApp::draw(){
+    
      /* Leap iGesture Key
      --------------------------------
      1 = Screen Tap
@@ -44,46 +47,55 @@ void testApp::draw()
     
     string msg;
     
-    switch (leap.iGestures)
-    {
+    switch (leap.iGestures) {
         case 1:
             msg = "Screen Tap";
+            msg += "\nPosition: "+ofToString(leap.screenTapPosition);
             break;
             
         case 2:
             msg = "Key Tap";
+            msg += "\nPosition: " + ofToString(leap.keyTapPosition);
             break;
             
         case 3:
             msg = "Swipe Right";
+            msg += "\nSwipe Speed mm/s: " + ofToString(leap.swipeSpeed) + "\nDuration sec's: "+ofToString(leap.swipeDurationSeconds);
             break;
             
         case 4:
             msg = "Swipe Left";
+            msg += "\nSwipe Speed mm/s: " + ofToString(leap.swipeSpeed) + "\nDuration sec's: "+ofToString(leap.swipeDurationSeconds);
             break;
             
         case 5:
             msg = "Swipe Down";
+            msg += "\nSwipe Speed mm/s: " + ofToString(leap.swipeSpeed) + "\nDuration sec's: "+ofToString(leap.swipeDurationSeconds);
             break;
             
         case 6:
             msg = "Swipe Up";
+            msg += "\nSwipe Speed mm/s: " + ofToString(leap.swipeSpeed) + "\nDuration sec's: "+ofToString(leap.swipeDurationSeconds);
             break;
             
         case 7:
             msg = "Swipe Forward";
+            msg += "\nSwipe Speed mm/s: " + ofToString(leap.swipeSpeed) + "\nDuration sec's: "+ofToString(leap.swipeDurationSeconds);
             break;
             
         case 8:
             msg = "Swipe Backwards";
+            msg += "\nSwipe Speed mm/s: " + ofToString(leap.swipeSpeed) + "\nDuration sec's: "+ofToString(leap.swipeDurationSeconds);
             break;
             
         case 9:
             msg = "Circle Left";
+            msg += "\nCircle Radius: " + ofToString(leap.circleRadius) + "\nCircle Center: "+ofToString(leap.circleCenter);
             break;
             
         case 10:
             msg = "Circle Right";
+            msg += "\nCircle Radius: " + ofToString(leap.circleRadius) + "\nCircle Center: "+ofToString(leap.circleCenter);
             break;
             
         default:
@@ -131,7 +143,6 @@ void testApp::dragEvent(ofDragInfo dragInfo){
 }
 
 //--------------------------------------------------------------
-void testApp::exit()
-{
+void testApp::exit(){
     leap.close();  // let's close down Leap and kill the controller
 }
