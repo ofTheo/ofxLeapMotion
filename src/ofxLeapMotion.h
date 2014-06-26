@@ -58,7 +58,7 @@ class ofxLeapMotionSimpleHand{
         
             // sphere - hand openness debug draw
             ofSetColor(200, 0, 0, 80);
-            ofSphere(sphereCenter, sphereRadius);
+            ofDrawSphere(sphereCenter, sphereRadius);
         
             for(int i = 0; i < fingers.size(); i++){
                 //ofDrawArrow(handPos, fingers[i].pos, 10);
@@ -66,11 +66,11 @@ class ofxLeapMotionSimpleHand{
                 // fingers base debug draw
                 ofSetColor(190);
                 ofLine(handPos, fingers[i].base);
-                ofBox(fingers[i].base, 20);
+                ofDrawBox(fingers[i].base, 20);
                 ofLine(fingers[i].base, fingers[i].pos);
                 
                 ofSetColor(0, 200, 0);
-                ofSphere(fingers[i].pos, 20);
+                ofDrawSphere(fingers[i].pos, 20);
 
             }
             
@@ -239,7 +239,7 @@ class ofxLeapMotion : public Listener{
                     swipeSpeed = swipe.speed();                             // swipe speed in mm/s
                     swipeDurationSeconds = swipe.durationSeconds();         // swipe duration in seconds
                     swipeDurationMicros = swipe.duration();                 // swipe duration in micros
-                    swipe.position()
+                    swipe.position();
 
                 }
                 
