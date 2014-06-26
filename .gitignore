@@ -1,19 +1,27 @@
 
+# built
+*.app
+*.a
+
+# osx
+.DS_Store
+
+# win
+*.exe
+*.dll
+
+# linux
+*~
+
 # xcode
 *.pbxuser
 *.perspectivev3
-*.mode*v3
+*.mode1v3
 xcuserdata
 build
-*.app
-*.a
-.xccheckout
 
-# OSX
-*.DS_*
+# codeblocks
+*.layout
+*.depend
+*.cbTemp
 
-# svn
-.svn/
-obj/
-#bin/
-build/
