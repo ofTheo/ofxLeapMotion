@@ -16,13 +16,19 @@ class ofxLeapMotionSimpleHand{
     typedef struct{
         ofPoint pos;
         ofPoint vel;
-        int64_t id; 
+        ofPoint base;                   // finger's base
+        int64_t id;
     }simpleFinger;
     
     vector <simpleFinger>  fingers;
     
     ofPoint handPos; 
     ofPoint handNormal;
+                                        
+    ofPoint handVelocity;               // palm vel
+    ofPoint sphereCenter;               // palm and fingers sphere position
+    float sphereRadius;                 // and radius for hand openness
+
     
     void debugDraw(){
         ofPushStyle();
@@ -49,8 +55,23 @@ class ofxLeapMotionSimpleHand{
                 ofDrawBox(0, 0, 0, 60);
 #endif
             ofPopMatrix();
+        
+            // sphere - hand openness debug draw
+            ofSetColor(200, 0, 0, 80);
+            ofSphere(sphereCenter, sphereRadius);
+        
             for(int i = 0; i < fingers.size(); i++){
-                ofDrawArrow(handPos, fingers[i].pos, 10);
+                //ofDrawArrow(handPos, fingers[i].pos, 10);
+            
+                // fingers base debug draw
+                ofSetColor(190);
+                ofLine(handPos, fingers[i].base);
+                ofBox(fingers[i].base, 20);
+                ofLine(fingers[i].base, fingers[i].pos);
+                
+                ofSetColor(0, 200, 0);
+                ofSphere(fingers[i].pos, 20);
+
             }
             
             ofSetColor(220, 220, 0);
@@ -69,7 +90,27 @@ class ofxLeapMotion : public Listener{
     
     // TODO: adding leap gesture support - JRW
     int iGestures;
-	
+    
+    // swipe data
+    float swipeSpeed = 0.0;
+    float swipeDurationSeconds = 0.0;
+    int64_t swipeDurationMicros = 0.0;
+    
+    // circle data
+    float circleProgress;
+    float circleRadius;
+    ofPoint circleCenter;
+    ofVec3f circleNormal;
+    
+    //key tap
+    ofPoint keyTapPosition;  
+    
+    // screen tap
+    ofPoint  screenTapPosition;
+    ofVec3f screenTapDirection;
+    
+    // TODO: hands + pointables list, id's, global gesture pos? - rux
+
 		ofxLeapMotion(){
             reset();
             resetMapping();
@@ -143,16 +184,20 @@ class ofxLeapMotion : public Listener{
                 // screen tap gesture (forward poke / tap)
                 if (gestures[i].type() == Leap::Gesture::TYPE_SCREEN_TAP) {
                     Leap::ScreenTapGesture tap = gestures[i];
-                    ofVec3f tapLoc = getMappedofPoint(tap.position());
-                    
+
+                    screenTapPosition = getMappedofPoint(tap.position());   // screen tap gesture data = tap position
+                    screenTapDirection = getofPoint(tap.direction());       // screen tap gesture data = tap direction
+
                     iGestures = 1;
-                    
+        
                 }
                 
                 // key tap gesture (down tap)
                 else if (gestures[i].type() == Leap::Gesture::TYPE_KEY_TAP) {
                     Leap::KeyTapGesture tap = gestures[i];
-                    
+
+                    keyTapPosition = getofPoint(tap.position());            // key tap gesture data = tap position
+
                     iGestures = 2;
                     
                 }
@@ -189,19 +234,27 @@ class ofxLeapMotion : public Listener{
                     else if (curSwipe.z > 5) {
                         iGestures = 8;
                     }
+                    
+                    // more swipe gesture data
+                    swipeSpeed = swipe.speed();                             // swipe speed in mm/s
+                    swipeDurationSeconds = swipe.durationSeconds();         // swipe duration in seconds
+                    swipeDurationMicros = swipe.duration();                 // swipe duration in micros
+                    swipe.position()
+
                 }
                 
                 // circle gesture
                 else if (gestures[i].type() == Leap::Gesture::TYPE_CIRCLE) {
                     Leap::CircleGesture circle = gestures[i];
-                    float progress = circle.progress();
+                    circleProgress = circle.progress();                     // circle progress
 
-                    if (progress >= 1.0f) {
+                    if (circleProgress >= 1.0f) {
                         
-                        ofVec3f center = getMappedofPoint(circle.center());
-                        ofVec3f normal(circle.normal().x, circle.normal().y, circle.normal().z);
+                        circleCenter = getMappedofPoint(circle.center());                           // changed to global
+                        circleNormal.set(circle.normal().x, circle.normal().y, circle.normal().z);  // changed to global
+
                         double curAngle = 6.5;
-                        if (normal.z < 0) {
+                        if (circleNormal.z < 0) {
                             curAngle *= -1;
                         }
                         
@@ -280,13 +333,21 @@ class ofxLeapMotion : public Listener{
             
                 curHand.handPos     = getMappedofPoint( leapHands[i].palmPosition() );
                 curHand.handNormal  = getofPoint( leapHands[i].palmNormal() );
+                curHand.handVelocity = getofPoint( leapHands[i].palmVelocity() );           //  more hand data - hand velocity
+                curHand.sphereRadius = leapHands[i].sphereRadius();                         //  more hand data - hand openness
+                curHand.sphereCenter = getMappedofPoint( leapHands[i].sphereCenter() );     //  more hand data - sphere center
+
 
                 for(int j = 0; j < leapHands[i].fingers().count(); j++){
-                    const Finger & finger = leapHands[i].fingers()[j];
+                    const Finger & finger = hands[i].fingers()[j];
                 
-                    ofxLeapMotionSimpleHand::simpleFinger f; 
+                    Leap::Vector basePosition = -finger.direction() * finger.length();      //  calculate finger base position
+                    basePosition += finger.tipPosition();                                   //  calculate finger base position
+
+                    ofxLeapMotionSimpleHand::simpleFinger f;
                     f.pos = getMappedofPoint( finger.tipPosition() );
                     f.vel = getMappedofPoint(finger.tipVelocity());
+                    f.base = getMappedofPoint(basePosition);                                //
                     f.id = finger.id();
                     
                     curHand.fingers.push_back( f );                    
