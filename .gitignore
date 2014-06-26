@@ -19,6 +19,7 @@
 *.mode1v3
 xcuserdata
 build
+xcshareddata
 
 # codeblocks
 *.layout
