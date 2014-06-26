@@ -21,19 +21,25 @@ namespace Leap {
  * The constant pi as a single precision floating point number.
  * @since 1.0
  */
+ #ifndef PI
 static const float PI          = 3.1415926536f;
+#endif
 /**
  * The constant ratio to convert an angle measure from degrees to radians.
  * Multiply a value in degrees by this constant to convert to radians.
  * @since 1.0
  */
+ #ifndef DEG_TO_RAD
 static const float DEG_TO_RAD  = 0.0174532925f;
+#endif
 /**
  * The constant ratio to convert an angle measure from radians to degrees.
  * Multiply a value in radians by this constant to convert to degrees.
  * @since 1.0
  */
+ #ifndef RAD_TO_DEG
 static const float RAD_TO_DEG  = 57.295779513f;
+#endif
 
 /**
 * The difference between 1 and the least value greater than 1 that is

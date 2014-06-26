@@ -309,6 +309,31 @@ class ofxLeapMotion : public Listener{
 			onFrameInternal(contr); // call this if you want to use getHands() / isFrameNew() etc 
 		}
 		
+		//--------------------------------------------------------------
+        virtual void onFocusGained(const Controller& contr){
+            ofLogWarning("ofxLeapMotionApp - onFocusGained");
+        }
+		
+		//--------------------------------------------------------------
+        virtual void onFocusLost(const Controller& contr){
+            ofLogWarning("ofxLeapMotionApp - onFocusLost");
+        }
+		
+		//--------------------------------------------------------------
+        virtual void onServiceConnect(const Controller& contr){
+            ofLogWarning("ofxLeapMotionApp - onServiceConnect");
+        }
+		
+		//--------------------------------------------------------------
+        virtual void onServiceDisconnect(const Controller& contr){
+            ofLogWarning("ofxLeapMotionApp - onServiceDisconnect");
+        }
+		
+		//--------------------------------------------------------------
+        virtual void onDeviceChange(const Controller& contr){
+            ofLogWarning("ofxLeapMotionApp - onDeviceChange");
+        }
+		
 		//Simple access to the hands 
 		//-------------------------------------------------------------- 
 		vector <Hand> getLeapHands(){
