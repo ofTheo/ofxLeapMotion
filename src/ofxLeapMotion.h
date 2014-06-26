@@ -150,5 +150,3 @@ class ofxLeapMotion : public Listener{
 		
 		Poco::FastMutex ourMutex;
 };
-
-

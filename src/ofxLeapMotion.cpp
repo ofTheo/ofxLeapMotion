@@ -95,7 +95,7 @@ void ofxLeapMotion::reset(){
 
 //--------------------------------------------------------------
 void ofxLeapMotion::close(){
-	if( ourController ){
+	if(ourController){
 		ourController->removeListener(*this);
 	}
 	
@@ -124,71 +124,67 @@ void ofxLeapMotion::updateGestures(){
 	
 	Leap::Frame frame = ourController->frame();
 	
-	if (lastFrame == frame) {
+	if(lastFrame == frame){
 		return;
 	}
 	
-	Leap::GestureList gestures = lastFrame.isValid()    ?
-	frame.gestures(lastFrame) :
-	frame.gestures();
+	Leap::GestureList gestures = lastFrame.isValid() ? frame.gestures(lastFrame) : frame.gestures();
 	
 	lastFrame = frame;
 	
 	size_t numGestures = gestures.count();
 	
-	for (size_t i=0; i < numGestures; i++) {
+	for(size_t i=0; i < numGestures; i++){
 		
 		// screen tap gesture (forward poke / tap)
-		if (gestures[i].type() == Leap::Gesture::TYPE_SCREEN_TAP) {
+		if(gestures[i].type() == Leap::Gesture::TYPE_SCREEN_TAP){
 			Leap::ScreenTapGesture tap = gestures[i];
 
 			screenTapPosition = getMappedofPoint(tap.position());   // screen tap gesture data = tap position
 			screenTapDirection = getofPoint(tap.direction());       // screen tap gesture data = tap direction
 
 			iGestures = 1;
-
 		}
 		
 		// key tap gesture (down tap)
-		else if (gestures[i].type() == Leap::Gesture::TYPE_KEY_TAP) {
+		else if(gestures[i].type() == Leap::Gesture::TYPE_KEY_TAP){
 			Leap::KeyTapGesture tap = gestures[i];
 
 			keyTapPosition = getofPoint(tap.position());            // key tap gesture data = tap position
 
 			iGestures = 2;
-			
 		}
 		
 		// swipe gesture
-		else if (gestures[i].type() == Leap::Gesture::TYPE_SWIPE) {
+		else if(gestures[i].type() == Leap::Gesture::TYPE_SWIPE){
 			Leap::SwipeGesture swipe = gestures[i];
 			Leap::Vector diff = 0.04f*(swipe.position() - swipe.startPosition());
 			ofVec3f curSwipe(diff.x, -diff.y, diff.z);
 			
 			// swipe left
-			if (curSwipe.x < -3 && curSwipe.x > -20) {
+			if(curSwipe.x < -3 && curSwipe.x > -20){
 				iGestures = 4;
 			}
 			// swipe right
-			else if (curSwipe.x > 3 && curSwipe.x < 20) {
+			else if(curSwipe.x > 3 && curSwipe.x < 20){
 				iGestures = 3;
 			}
 			// swipe up
-			if (curSwipe.y < -3 && curSwipe.y > -20) {
+			if(curSwipe.y < -3 && curSwipe.y > -20){
 				iGestures = 6;
 			}
 			// swipe down
-			else if (curSwipe.y > 3 && curSwipe.y < 20) {
+			else if(curSwipe.y > 3 && curSwipe.y < 20){
 				iGestures = 5;
 			}
 			
 			// 3D swiping
 			// swipe forward
-			if (curSwipe.z < -5) {
+			if(curSwipe.z < -5){
 				iGestures = 7;
 			}
 			// swipe back
-			else if (curSwipe.z > 5) {
+			else if(curSwipe.z > 5){
 				iGestures = 8;
 			}
 			
@@ -197,40 +193,38 @@ void ofxLeapMotion::updateGestures(){
 			swipeDurationSeconds = swipe.durationSeconds();         // swipe duration in seconds
 			swipeDurationMicros = swipe.duration();                 // swipe duration in micros
 			swipe.position();
-
 		}
 		
 		// circle gesture
-		else if (gestures[i].type() == Leap::Gesture::TYPE_CIRCLE) {
+		else if(gestures[i].type() == Leap::Gesture::TYPE_CIRCLE){
 			Leap::CircleGesture circle = gestures[i];
 			circleProgress = circle.progress();                     // circle progress
 
-			if (circleProgress >= 1.0f) {
+			if(circleProgress >= 1.0f){
 				
 				circleCenter = getMappedofPoint(circle.center());                           // changed to global
 				circleNormal.set(circle.normal().x, circle.normal().y, circle.normal().z);  // changed to global
 
 				double curAngle = 6.5;
-				if (circleNormal.z < 0) {
+				if(circleNormal.z < 0){
 					curAngle *= -1;
 				}
 				
-				if (curAngle < 0) {
+				if(curAngle < 0){
 					// clockwise rotation
 					iGestures = 10;
 				}
-				else {
+				else{
 					// counter-clockwise rotation
 					iGestures = 9;
 				}
 			}
-			
 		}
 		
 		// kill gesture when done
 		// gestures 5 & 6 are always in a STATE_STOP so we exclude
-		if (gestures[i].type() != 5 && gestures[i].type() != 6) {
-			if (gestures[i].state() == Leap::Gesture::STATE_STOP) {
+		if(gestures[i].type() != 5 && gestures[i].type() != 6){
+			if(gestures[i].state() == Leap::Gesture::STATE_STOP){
 				iGestures = 0;
 			}
 		}
@@ -293,7 +287,7 @@ void ofxLeapMotion::onDeviceChange(const Controller& contr){
 vector <Hand> ofxLeapMotion::getLeapHands(){
 
 	vector <Hand> handsCopy; 
-	if( ourMutex.tryLock(2000) ){
+	if(ourMutex.tryLock(2000)){
 		handsCopy = hands; 
 		ourMutex.unlock();
 	}
@@ -310,42 +304,42 @@ vector <ofxLeapMotionSimpleHand> ofxLeapMotion::getSimpleHands(){
 	for(int i = 0; i < leapHands.size(); i++){
 		ofxLeapMotionSimpleHand curHand;
 	
-		curHand.handPos     = getMappedofPoint( leapHands[i].palmPosition() );
-		curHand.handNormal  = getofPoint( leapHands[i].palmNormal() );
-		curHand.handVelocity = getofPoint( leapHands[i].palmVelocity() );           //  more hand data - hand velocity
-		curHand.sphereRadius = leapHands[i].sphereRadius();                         //  more hand data - hand openness
-		curHand.sphereCenter = getMappedofPoint( leapHands[i].sphereCenter() );     //  more hand data - sphere center
+		curHand.handPos     = getMappedofPoint(leapHands[i].palmPosition());
+		curHand.handNormal  = getofPoint(leapHands[i].palmNormal());
+		curHand.handVelocity = getofPoint(leapHands[i].palmVelocity());           //  more hand data - hand velocity
+		curHand.sphereRadius = leapHands[i].sphereRadius();                       //  more hand data - hand openness
+		curHand.sphereCenter = getMappedofPoint(leapHands[i].sphereCenter());     //  more hand data - sphere center
 
 
 		for(int j = 0; j < leapHands[i].fingers().count(); j++){
 			const Finger & finger = hands[i].fingers()[j];
 		
-			Leap::Vector basePosition = -finger.direction() * finger.length();      //  calculate finger base position
-			basePosition += finger.tipPosition();                                   //  calculate finger base position
+			Leap::Vector basePosition = -finger.direction() * finger.length();     //  calculate finger base position
+			basePosition += finger.tipPosition();                                  //  calculate finger base position
 
 			ofxLeapMotionSimpleHand::simpleFinger f;
-			f.pos = getMappedofPoint( finger.tipPosition() );
+			f.pos = getMappedofPoint(finger.tipPosition());
 			f.vel = getMappedofPoint(finger.tipVelocity());
-			f.base = getMappedofPoint(basePosition);                                //
+			f.base = getMappedofPoint(basePosition);
 			f.id = finger.id();
 			
-			curHand.fingers.push_back( f );                    
+			curHand.fingers.push_back(f);
 		}
 		
-		simpleHands.push_back( curHand ); 
+		simpleHands.push_back(curHand);
 	}
 
 	return simpleHands;
 }
 
 //--------------------------------------------------------------
-bool ofxLeapMotion::isConnected() {
+bool ofxLeapMotion::isConnected(){
 	return (ourController && ourController->isConnected());
 }
 
 //--------------------------------------------------------------
-void ofxLeapMotion::setReceiveBackgroundFrames(bool bReceiveBg) {
-	if (ourController) {
+void ofxLeapMotion::setReceiveBackgroundFrames(bool bReceiveBg){
+	if(ourController){
 		ourController->setPolicyFlags(bReceiveBg? Leap::Controller::POLICY_BACKGROUND_FRAMES : Leap::Controller::POLICY_DEFAULT);
 	}
 }
@@ -382,32 +376,31 @@ void ofxLeapMotion::resetMapping(){
 
 //-------------------------------------------------------------- 
 void ofxLeapMotion::setMappingX(float minX, float maxX, float outputMinX, float outputMaxX){
-	xOffsetIn	= minX;
-	xOffsetOut	= outputMinX;			 
-	xScale  =   ( outputMaxX - outputMinX ) / ( maxX - minX ); 
+	xOffsetIn = minX;
+	xOffsetOut = outputMinX;
+	xScale = (outputMaxX - outputMinX) / (maxX - minX);
 }
 
 //-------------------------------------------------------------- 
 void ofxLeapMotion::setMappingY(float minY, float maxY, float outputMinY, float outputMaxY){
-	yOffsetIn	= minY;
-	yOffsetOut	= outputMinY;			 
-	yScale  =   ( outputMaxY - outputMinY ) / ( maxY - minY ); 
+	yOffsetIn = minY;
+	yOffsetOut = outputMinY;
+	yScale = (outputMaxY - outputMinY) / (maxY - minY);
 }
 
 //-------------------------------------------------------------- 
 void ofxLeapMotion::setMappingZ(float minZ, float maxZ, float outputMinZ, float outputMaxZ){
-	zOffsetIn	= minZ;
-	zOffsetOut	= outputMinZ;
-	zScale  =   ( outputMaxZ - outputMinZ ) / ( maxZ - minZ ); 
+	zOffsetIn = minZ;
+	zOffsetOut = outputMinZ;
+	zScale = (outputMaxZ - outputMinZ) / (maxZ - minZ);
 }
 
 //-------------------------------------------------------------- 
-ofPoint ofxLeapMotion::getMappedofPoint( Vector v ){
+ofPoint ofxLeapMotion::getMappedofPoint(Vector v){
 	ofPoint p = getofPoint(v);
 	p.x = xOffsetOut + (p.x - xOffsetIn) * xScale;
 	p.y = yOffsetOut + (p.y - yOffsetIn) * yScale;
 	p.z = zOffsetOut + (p.z - zOffsetIn) * zScale;
-
 	return p;
 }
 
