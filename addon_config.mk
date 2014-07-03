@@ -46,3 +46,7 @@ linux:
 	ADDON_LDFLAGS = ../../../addons/ofxLeapMotion/libs/lib/linux/libLeap.so
 	ADDON_LDFLAGS += -Wl,-rpath=../../../addons/ofxLeapMotion/libs/lib/linux
 	
+linux64:
+	ADDON_LDFLAGS = ../../../addons/ofxLeapMotion/libs/lib/linux64/libLeap.so
+	ADDON_LDFLAGS += -Wl,-rpath=../../../addons/ofxLeapMotion/libs/lib/linux64
+	
