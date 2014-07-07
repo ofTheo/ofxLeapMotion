@@ -41,9 +41,9 @@ class ofxLeapMotion : public Listener{
 		int iGestures;
 		
 		// swipe data
-		float swipeSpeed = 0.0;
-		float swipeDurationSeconds = 0.0;
-		int64_t swipeDurationMicros = 0.0;
+		float swipeSpeed;
+		float swipeDurationSeconds;
+		int64_t swipeDurationMicros;
 		
 		// circle data
 		float circleProgress;
