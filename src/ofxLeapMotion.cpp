@@ -207,6 +207,7 @@ void ofxLeapMotion::updateGestures(){
 				
 				circleCenter = getMappedofPoint(circle.center());                           // changed to global
 				circleNormal.set(circle.normal().x, circle.normal().y, circle.normal().z);  // changed to global
+				circleRadius = circle.radius();
 
 				double curAngle = 6.5;
 				if(circleNormal.z < 0){
