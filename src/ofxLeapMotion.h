@@ -41,9 +41,9 @@ class ofxLeapMotion : public Listener{
 		int iGestures;
 		
 		// swipe data
-		float swipeSpeed;
-		float swipeDurationSeconds;
-		int64_t swipeDurationMicros;
+		float swipeSpeed = 0.0;
+		float swipeDurationSeconds = 0.0;
+		int64_t swipeDurationMicros = 0.0;
 		
 		// circle data
 		float circleProgress;
@@ -113,6 +113,8 @@ class ofxLeapMotion : public Listener{
 		
 		//helper function for converting a Leap::Vector to an ofPoint
 		ofPoint getofPoint(Vector v);
+	
+		void setPolicyFlagHMD();
 
 	protected:
 		
