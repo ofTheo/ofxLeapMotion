@@ -113,6 +113,8 @@ class ofxLeapMotion : public Listener{
 		
 		//helper function for converting a Leap::Vector to an ofPoint
 		ofPoint getofPoint(Vector v);
+	
+		void setPolicyFlagHMD();
 
 	protected:
 		

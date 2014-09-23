@@ -67,10 +67,10 @@ void ofxLeapMotionSimpleHand::debugDraw(){
 
 // ofxLeapMotion
 //--------------------------------------------------------------
-ofxLeapMotion::ofxLeapMotion(){
-	swipeSpeed = 0.0;
-	swipeDurationSeconds = 0.0;
-	swipeDurationMicros = 0.0;
+ofxLeapMotion::ofxLeapMotion()
+		:swipeSpeed(0)
+		,swipeDurationSeconds(0)
+		,swipeDurationMicros(0) {
 	reset();
 	resetMapping();
 	ourController = new Leap::Controller(); 
@@ -89,6 +89,8 @@ void ofxLeapMotion::open(){
 	reset();
 	ourController->addListener(*this);
 }
+
+
 
 //--------------------------------------------------------------
 void ofxLeapMotion::reset(){
@@ -207,7 +209,6 @@ void ofxLeapMotion::updateGestures(){
 				
 				circleCenter = getMappedofPoint(circle.center());                           // changed to global
 				circleNormal.set(circle.normal().x, circle.normal().y, circle.normal().z);  // changed to global
-				circleRadius = circle.radius();
 
 				double curAngle = 6.5;
 				if(circleNormal.z < 0){
@@ -346,6 +347,11 @@ void ofxLeapMotion::setReceiveBackgroundFrames(bool bReceiveBg){
 	if(ourController){
 		ourController->setPolicyFlags(bReceiveBg? Leap::Controller::POLICY_BACKGROUND_FRAMES : Leap::Controller::POLICY_DEFAULT);
 	}
+}
+
+//--------------------------------------------------------------
+void ofxLeapMotion::setPolicyFlagHMD(){
+	ourController->setPolicyFlags (Leap::Controller::POLICY_OPTIMIZE_HMD);
 }
 
 //-------------------------------------------------------------- 
