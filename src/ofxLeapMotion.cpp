@@ -67,7 +67,10 @@ void ofxLeapMotionSimpleHand::debugDraw(){
 
 // ofxLeapMotion
 //--------------------------------------------------------------
-ofxLeapMotion::ofxLeapMotion(){
+ofxLeapMotion::ofxLeapMotion()
+		:swipeSpeed(0)
+		,swipeDurationSeconds(0)
+		,swipeDurationMicros(0) {
 	reset();
 	resetMapping();
 	ourController = new Leap::Controller(); 
