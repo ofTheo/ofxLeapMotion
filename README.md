@@ -13,8 +13,8 @@ See https://github.com/ofTheo/ofxLeapMotion for documentation as well as the [OF
 Description
 -----------
 
-ofxLeapMotion is an Open Frameworks addon for the LeapMotion that runs on Mac OSX.
-Support for Windows and Linux is coming soon. 
+ofxLeapMotion is an Open Frameworks addon for the LeapMotion that runs on Mac OS X and Windows. 
+A linux example is not included but should be easy to get working. 
 
 Installation
 ------------
