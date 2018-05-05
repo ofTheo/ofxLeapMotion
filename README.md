@@ -21,7 +21,7 @@ Installation
 
 * Use of this addon requires a Developer License from LeapMotion see: https://www.leapmotion.com/developers
 
-* Once registered you should download and install the latest Leap Software from https://beta.leapmotion.com/ 
+* Once registered you should download and install the latest Leap Software from https://developer.leapmotion.com/sdk/v2 
 
 * To use ofxLeapMotion, first you need to download and install [openFrameworks](https://github.com/openframeworks/openFrameworks).
 
