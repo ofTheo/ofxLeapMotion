@@ -292,7 +292,7 @@ void ofxLeapMotion::onDeviceChange(const Controller& contr){
 vector <Hand> ofxLeapMotion::getLeapHands(){
 
 	vector <Hand> handsCopy; 
-	if(ourMutex.tryLock(2000)){
+	if(ourMutex.try_lock()){
 		handsCopy = hands; 
 		ourMutex.unlock();
 	}

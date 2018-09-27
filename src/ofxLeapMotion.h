@@ -6,7 +6,6 @@
 
 #include "ofMain.h"
 #include "Leap.h"
-#include "Poco/Mutex.h"
 
 using namespace Leap;
 
@@ -150,5 +149,5 @@ class ofxLeapMotion : public Listener{
 		// TODO: added for Gesture support - JRW
 		Leap::Frame lastFrame;
 		
-		Poco::FastMutex ourMutex;
+        std::mutex ourMutex;
 };
