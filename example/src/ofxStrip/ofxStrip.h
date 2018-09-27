@@ -3,6 +3,7 @@
 
 #pragma once
 #include "ofMesh.h"
+#include "ofPoint.h"
 
 class ofxStrip{
 
@@ -25,13 +26,13 @@ class ofxStrip{
 			tex_v = tex_v_scale;
 		}
 		
-		void generate( vector <ofPoint> pts, float fixedWidth, ofPoint upVec){
-			vector <float> width;
+		void generate( std::vector <glm::vec3> pts, float fixedWidth, ofPoint upVec){
+			std::vector <float> width;
 			width.push_back(fixedWidth);
 			generate( pts, width, upVec);
 		} 
 		
-		void generate( vector <ofPoint> pts, vector <float> width, ofPoint upVec){
+		void generate( std::vector <glm::vec3> pts, std::vector <float> width, ofPoint upVec){
 			bool  bFixedWidth = false; 
 			float curWidth; 
 			float maxWidth = 0; 
@@ -62,11 +63,11 @@ class ofxStrip{
 				}
 				
 				//find this point and the next point
-				ofVec3f & thisPoint = pts[i-1];
-				ofVec3f & nextPoint = pts[i];
+				glm::vec3 & thisPoint = pts[i-1];
+				glm::vec3 & nextPoint = pts[i];
 				
 				ofPoint delta		= nextPoint - thisPoint; 
-				ofPoint deltaNorm	= delta.normalized();
+				ofPoint deltaNorm	= delta.getNormalized();
 				
 				ofVec3f toTheLeft	= deltaNorm.getPerpendicular(upVec);
 								
